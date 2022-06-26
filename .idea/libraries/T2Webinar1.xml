@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="T2Webinar1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dist/T2Webinar1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
