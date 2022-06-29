@@ -7,12 +7,19 @@ public class InvoiceHeader {
     private int id;
     private String customerName;
     private String date;
+    private double total;
+
     private ArrayList<InvoiceLine> lines;
     
-    public InvoiceHeader(int id, String customerName, String date) {
+    public InvoiceHeader(int id, String customerName, String date,double total) {
         this.id = id;
         this.customerName = customerName;
         this.date = date;
+        this.total=total;
+    }
+
+    public InvoiceHeader(int id, String part, String part0) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     public String getDate() {
@@ -25,6 +32,9 @@ public class InvoiceHeader {
 
     public int getId() {
         return id;
+    }
+      public double getTotal() {
+        return total;
     }
 
     public void setId(int id) {
@@ -58,6 +68,8 @@ public class InvoiceHeader {
         }
         return lines;
     }
+
+  
     
     
     

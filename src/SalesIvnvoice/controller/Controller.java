@@ -22,9 +22,8 @@ import SalesIvnvoice.model.InvoiceHeader;
 import SalesIvnvoice.model.InvoiceLine;
 import SalesIvnvoice.model.InvoiceLineTableModel;
 import SalesIvnvoice.view.SalesFrame;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import static sun.security.util.Event.report;
+import java.awt.Component;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -32,7 +31,7 @@ import static sun.security.util.Event.report;
  */
 public class Controller implements ActionListener, ListSelectionListener {
 
-    private SalesFrame frame;
+    private final SalesFrame frame;
 
     public Controller(SalesFrame frame) {
         this.frame = frame;
@@ -132,43 +131,171 @@ public class Controller implements ActionListener, ListSelectionListener {
     }
     
     private void createNewInvoice() {
+          int index = list.getSelectedIndex();
+         listModel.remove(index);
+
+    int size = listModel.getSize();
+
+    if (size == 0) { //Nobody's left, disable firing.
+        fireButton.setEnabled(false);
+
+    } else { //Select an index.
+        if (index == listModel.getSize()) {
+            //removed item in last position
+            index--;
+        }
+
+        list.setSelectedIndex(index);
+        list.ensureIndexIsVisible(index);
     }
+        
+    }
+    
 
     private void deleteInvoice() {
-        File myObj = new File("filename.txt"); 
-    if (myObj.delete()) { 
-      System.out.println("Deleted the file: " + myObj.getName());
-    } else {
-      System.out.println("Failed to delete the file.");
-    } 
-  
+        Component nul = null;
+        int action = JOptionPane.showConfirmDialog(nul,"do you relay want to delete","Delete",JOptionPane.YES_NO_OPTION);
+        JOptionPane.showMessageDialog(nul, "data deleted");
+        refreshTable();
     }
+    
+  
+    
 
     private void saveFiles() {
-        try {
-    File file = new File("logKMAX.txt");
-    // if file doesnt exists, then create it
-    if (!file.exists()) {
-      file.createNewFile();
-    }
-
-    FileWriter fw = new FileWriter(file.getAbsoluteFile());
-            try (BufferedWriter bw = new BufferedWriter(fw)) {
-        char[] content = null;
-                bw.write(content);
+           try {
+            JFileChooser fc = new JFileChooser();
+            int result = fc.showSaveDialog(frame);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File headerFile = fc.getSelectedFile();
+                String headerStrPath = headerFile.getAbsolutePath();
+                Path headerPath = Paths.get(headerStrPath);
+                List<String> headerLines = Files.lines(headerPath).collect(Collectors.toList());
+                // ["1,22-11-2020,Ali", "2,13-10-2021,Saleh"]
+                ArrayList<InvoiceHeader> invoiceHeadersList = new ArrayList<>();
+                for (String headerLine : headerLines) {
+                    String[] parts = headerLine.split(",");
+                    // parts = ["1", "22-11-2020", "Ali"]
+                    // parts = ["2", "13-10-2021", "Saleh"]
+                    int id = Integer.parseInt(parts[0]);
+                    InvoiceHeader invHeader = new InvoiceHeader(id, parts[2], parts[1]);
+                    invoiceHeadersList.add(invHeader);
+                }
+                System.out.println("check");
+                result = fc.showSaveDialog(frame);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String lineStrPath = fc.getSelectedFile().getAbsolutePath();
+                    Path linePath = Paths.get(lineStrPath);
+                    List<String> lineLines = Files.lines(linePath).collect(Collectors.toList());
+                    // ["1,Mobile,3200,1", "1,Cover,20,2", "1,Headphone,130,1", "2,Laptop,4000,1", "2,Mouse,35,1"]
+                    for (String lineLine : lineLines) {
+                        String[] parts = lineLine.split(",");
+                        // ["1","Mobile","3200","1"]
+                        // ["1","Cover","20","2"]
+                        // ["1","Headphone","130","1"]
+                        // ["2","Laptop","4000","1"]
+                        // ["2","Mouse","35","1"]
+                        int invId = Integer.parseInt(parts[0]);
+                        double price = Double.parseDouble(parts[2]);
+                        int count = Integer.parseInt(parts[3]);
+                        InvoiceHeader header = getInvoiceHeaderById(invoiceHeadersList, invId);
+                        InvoiceLine invLine = new InvoiceLine(parts[1], price, count, header);
+                        header.getLines().add(invLine);
+                    }
+                    frame.setInvoiceHeadersList(invoiceHeadersList);
+                    
+                }
             }
-  } catch (IOException e) {
-    e.printStackTrace();
-  }
-    }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+          }
     
 
     private void createNewLine() {
+         int index = list.getSelectedIndex();
+         listModel.remove(index);
+
+    int size = listModel.getSize();
+
+    if (size == 0) { //Nobody's left, disable firing.
+        fireButton.setEnabled(false);
+
+    } else { //Select an index.
+        if (index == listModel.getSize()) {
+            //removed item in last position
+            index--;
+        }
+
+        list.setSelectedIndex(index);
+        list.ensureIndexIsVisible(index);
+    }
+        
     }
 
     private void deleteLine() {
+         Component nul = null;
+        JOptionPane.showMessageDialog(nul, "data deleted");
+        refreshTable();
     }
 
+    private void refreshTable() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private static class listModel {
+
+        private static int getSize() {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        private static void remove(int index) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+
+        public listModel() {
+        }
+    }
+
+    private static class fireButton {
+
+        private static void setEnabled(boolean b) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+
+        public fireButton() {
+        }
+    }
+
+    private static class list {
+
+        private static int getSelectedIndex() {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        private static void ensureIndexIsVisible(int index) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        private static void setSelectedIndex(int index) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+
+
+        public list() {
+        }
+    }
+
+   
+    }
+
+   
     
 
-}
+    
+    
+
+
